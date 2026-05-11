@@ -1,0 +1,36 @@
+name: Hourly Traffic Scraper
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch: 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run scraper
+        run: python main.py
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          if [ -f traffic_history.csv ]; then
+            git add traffic_history.csv
+            git commit -m "Update traffic data: $(date)" || echo "No changes to commit"
+            git push
+          else
+            echo "File traffic_history.csv was not created. Skipping commit."
+          fi
