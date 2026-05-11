@@ -27,8 +27,8 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          if [ -f traffic_history.csv ]; then
-            git add traffic_history.csv
+          if [ -f historical_traffic_tel_aviv.csv ]; then
+            git add historical_traffic_tel_aviv.csv
             git commit -m "Update traffic data: $(date)" || echo "No changes to commit"
             git push
           else
