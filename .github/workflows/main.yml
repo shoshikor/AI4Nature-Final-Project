@@ -1,9 +1,13 @@
-name: Hourly Traffic Scraper
+name: Traffic Scraper
 
 on:
   schedule:
     - cron: '*/15 * * * *'
   workflow_dispatch: 
+
+# Added permissions to allow the action to push changes
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -27,10 +31,16 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          if [ -f historical_traffic_tel_aviv.csv ]; then
-            git add historical_traffic_tel_aviv.csv
+          
+          # Updated to match the filename in main.py
+          FILE_NAME="historical_traffic_tel_aviv.csv"
+          
+          if [ -f "$FILE_NAME" ]; then
+            git add "$FILE_NAME"
+            # The '|| true' prevents the workflow from failing if there are no new changes
             git commit -m "Update traffic data: $(date)" || echo "No changes to commit"
             git push
           else
-            echo "File traffic_history.csv was not created. Skipping commit."
+            echo "File $FILE_NAME was not found. Check your Python script output."
+            exit 1
           fi
